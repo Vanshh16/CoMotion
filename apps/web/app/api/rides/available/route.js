@@ -38,6 +38,9 @@ export async function GET(req) {
           notIn: excludedRideIds,
         },
       },
+      include: {
+        driver: true
+      },
       orderBy: {
         departure: 'asc',
       },

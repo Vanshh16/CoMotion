@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import JoinRequestsPanel from './JoinRequestsPanel';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function Navbar() {
   const [role, setRole] = useState(null);
@@ -25,6 +26,8 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = async () => {
+    console.log("XXXX");
+    
     const response = await axios.post('/api/auth/logout');
     if (response.status === 200) {
       
