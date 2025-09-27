@@ -1,17 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import useLiveRideLocation from "./hooks/useLiveRideLocation";
 import JoinButton from "./JoinButton";
 import LiveMap from "./LiveMap";
 import axios from "axios";
+
 
 export default function RideCard({ ride, showJoin = false, status = false }) {
   const location = useLiveRideLocation(ride.id);
   console.log(location);
 
   const [currentStatus, setCurrentStatus] = useState("");
+  const [showDetails, setShowDetails] = useState(false);
+  const mockUsers = [
+  {
+    name: "Rajat Kumar",
+    email: "kumar@rajat@example.com",
+  },
+  {
+    name: "Priya Sharma",
+    email: "SharmaPriya@example.com",
+  },
+  
+];
+ // NE
 
+ 
   const handleJoin = async () => {
     setCurrentStatus("Joining...");
     const res = await axios.post("/api/ride/join", { rideId: ride.id });
@@ -23,6 +38,10 @@ export default function RideCard({ ride, showJoin = false, status = false }) {
     }
   };
 
+  useEffect(() => {
+     console.log(ride);
+
+  }, [ride]);
   return (
     <div className="rounded-3xl border border-blue-100 bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 space-y-6 backdrop-blur-sm">
       {/* Header: Route */}
@@ -87,6 +106,36 @@ export default function RideCard({ ride, showJoin = false, status = false }) {
           )}
         </div>
       )}
+      <button
+          onClick={() => setShowDetails(!showDetails)}
+          className="text-sm text-blue-600 underline hover:text-blue-800"
+        >
+          {showDetails ? "Hide Details" : "View Details"}
+        </button>
+
+      {showDetails && (
+        <div className="bg-blue-50 rounded-lg p-4 border border-blue-100 space-y-2">
+          <p className="font-semibold text-blue-700">👤 Driver:</p>
+          <div className="ml-4 text-gray-700">
+            <p>Name: {ride.driver?.name || "N/A"}</p>
+            <p>Phone: {ride.driver?.phoneNumber || "N/A"}</p>
+            <p>vehicleInfo: ⭐ {ride.driver?.vehicleInfo || "N/A"}</p> 
+          </div>
+
+          <p className="mt-3 font-semibold text-blue-700">👥 Co-passengers:</p>
+          <ul className="ml-4 list-disc text-gray-700">
+            {mockUsers.length > 0 ? (
+              mockUsers.map((user, index) => (
+                <li key={index}>
+                  {user.name}
+                </li>
+              ))
+            ) : (
+              <li>No co-passengers yet</li>
+            )}
+          </ul>
+        </div>
+      )} 
       {currentStatus === "Request Sent!" && (
         <div className="pt-4 border-t flex justify-end items-center space-x-5">
           <span className="font-semibold text-blue-600">Status: </span>{" "}

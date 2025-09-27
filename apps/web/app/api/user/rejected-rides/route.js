@@ -23,7 +23,11 @@ export async function GET(req) {
       status: 'REJECTED'
      },
     include: {
-      ride: true,
+      ride: {
+        include: {
+          driver: true
+        }
+      },
     },
     orderBy: {
       createdAt: 'desc'

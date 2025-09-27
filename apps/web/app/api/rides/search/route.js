@@ -19,6 +19,9 @@ export async function GET(req) {
       departure: { gt: new Date() },
       status: 'SCHEDULED'
     },
+     include: {
+        driver: true,
+      },
     orderBy: { departure: 'asc' }
   });
 

@@ -39,7 +39,6 @@ export async function GET(req) {
         },
       },
       include: {
-        joinRequests: true,
         driver: true
       },
       orderBy: {
