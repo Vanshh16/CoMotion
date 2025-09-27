@@ -1,14 +1,14 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@repo/db';
-import { verifyToken } from '../../../../lib/auth';
+import { NextResponse } from "next/server";
+import { prisma } from "@repo/db";
+import { verifyToken } from "../../../../lib/auth";
 
 export async function GET(req) {
   try {
-    const token = req.cookies.get('token')?.value;
+    const token = req.cookies.get("token")?.value;
     const decoded = verifyToken(token);
 
-    if (!decoded || decoded.role !== 'user') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!decoded || decoded.role !== "user") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const now = new Date();
@@ -38,14 +38,36 @@ export async function GET(req) {
           notIn: excludedRideIds,
         },
       },
+      include: {
+        joinRequests: true,
+        driver: true
+      },
       orderBy: {
-        departure: 'asc',
+        departure: "asc",
       },
     });
 
-    return NextResponse.json({ rides });
+    // console.log(rides.joinRequests);
+
+    let alteredRides = [];
+    for (let index = 0; index < rides.length; index++) {
+      const joinRequestArray = rides[index].joinRequests;
+      let obj = {ride: rides[index], user:[]};
+      for (let j = 0; j < joinRequestArray.length; j++) {
+        const joinRequest = await prisma.joinRequest.findUnique({
+          where: { id: joinRequestArray[j].id },
+          include: { user: true },
+        });
+        console.log(joinRequest.user);
+        obj.user.push(joinRequest.user);
+      }
+      alteredRides.push(obj)
+    }
+    console.log(alteredRides);
+    
+    return NextResponse.json({ rides, alteredRides });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
