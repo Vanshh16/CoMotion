@@ -137,12 +137,12 @@ const fewShotExamples = [
 // This is the core refactored function using modern LangChain
 export async function parseFreeTextToQuery(userText, opts = {}) {
   // 1. Define model with options from environment or function call
-  const modelName = opts.model || process.env.OPENAI_MODEL || "gpt-4o-mini";
+  const modelName = opts.model || process.env.OPENAI_MODEL || "gpt-5";
   const temperature = typeof opts.temperature === "number" ? opts.temperature : 0.0;
 
   const model = new ChatOpenAI({
     modelName,
-    temperature,
+    // temperature,
     // The API key is automatically read from the OPENAI_API_KEY environment variable
   });
 

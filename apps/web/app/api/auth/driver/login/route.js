@@ -19,8 +19,8 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Driver not found' }, { status: 404 });
     }
 
-    const passwordMatch = await bcrypt.compare(password, driver.password);
-
+    // const passwordMatch = await bcrypt.compare(password, driver.password);
+const passwordMatch = password === driver.password;
     if (!passwordMatch) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }

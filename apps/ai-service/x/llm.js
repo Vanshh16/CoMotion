@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-5';
 
 if (!OPENAI_API_KEY) {
   console.warn('OPENAI_API_KEY not set. LLM calls will fail until you set it.');
@@ -16,7 +16,6 @@ async function callLLM(prompt) {
       { role: 'system', content: 'You are a JSON-output-only parser/reranker. Return JSON only.' },
       { role: 'user', content: prompt }
     ],
-    temperature: 0.0,
     max_tokens: 600
   };
 
