@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 
 export async function POST() {
-  
+  // Create response with logout message
+  const response = NextResponse.json({ message: 'Logged out' }, { status: 200 });
 
   // Expire the cookie
   response.cookies.set('token', '', {
@@ -12,5 +13,5 @@ export async function POST() {
     expires: new Date(0), // expired immediately
   });
 
-  return NextResponse.json({ message: 'Logged out' }, { status: 200 });
+  return response;
 }

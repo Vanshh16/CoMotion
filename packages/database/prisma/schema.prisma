@@ -11,7 +11,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://postgres:12344321@localhost:5432/CoMotion?schema=public"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -34,6 +34,7 @@ model Driver {
   role          Role     @default(DRIVER)
   licenseNumber String // Driver's license or any govt ID
   vehicleInfo   String // Details about the vehicle (auto, e-rickshaw, etc.)
+  upiId         String? // UPI ID for payments (e.g., driver@paytm)
   isVerified    Boolean  @default(false)
   rides         Ride[]   @relation("DriverRides")
   createdAt     DateTime @default(now())

@@ -1,0 +1,16 @@
+
+/node_modules
+.env
+
+# Test files
+test_*.js
+*_test.js
+quick_test.js
+simple_test.js
+debug_*.js
+create_fresh_rides.js
+
+# Output files
+output.txt
+result.json
+*.log

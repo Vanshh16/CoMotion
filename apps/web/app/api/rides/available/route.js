@@ -39,31 +39,26 @@ export async function GET(req) {
         },
       },
       include: {
-        driver: true
+        driver: true,
+        joinRequests: {
+          include: {
+            user: true,
+          },
+        },
       },
       orderBy: {
         departure: "asc",
       },
     });
 
-    // console.log(rides.joinRequests);
-
+    // Build alteredRides array with users from joinRequests
     let alteredRides = [];
     for (let index = 0; index < rides.length; index++) {
-      const joinRequestArray = rides[index].joinRequests;
-      let obj = {ride: rides[index], user:[]};
-      for (let j = 0; j < joinRequestArray.length; j++) {
-        const joinRequest = await prisma.joinRequest.findUnique({
-          where: { id: joinRequestArray[j].id },
-          include: { user: true },
-        });
-        console.log(joinRequest.user);
-        obj.user.push(joinRequest.user);
-      }
-      alteredRides.push(obj)
+      const ride = rides[index];
+      const users = ride.joinRequests.map(jr => jr.user);
+      alteredRides.push({ ride, user: users });
     }
-    console.log(alteredRides);
-    
+
     return NextResponse.json({ rides, alteredRides });
   } catch (err) {
     console.error(err);

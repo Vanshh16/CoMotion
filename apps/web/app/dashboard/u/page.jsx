@@ -2,28 +2,31 @@
 
 import { useEffect, useState } from "react";
 import RideCard from "../../../components/RideCard";
-import { useRouter } from "next/navigation";
 import axios from "axios";
 import useApprovalNotifications from "../../../components/hooks/useApprovalNotifications";
 import useRejectionNotifications from "../../../components/hooks/useRejectionNotification";
-import UserRideSearchForm from "../../../components/UserRideSearchForm";
+import UserRideSearchForm from "../../../components/UserRideSearchForm"; // <-- 1. OLD FORM
+import AIChatSearch from "../../../components/AIChatSearch"; // <-- 2. NEW AI CHAT
 
 export default function UserDashboard() {
   const [rides, setRides] = useState([]);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [userId, setUserId] = useState(null);
-  const router = useRouter();
 
   useEffect(() => {
     async function fetchMe() {
-      const res = await axios.get("/api/auth/me");
-      console.log("User Info:", res.data);
-      if (res.status === 200) {
-        const { id } = res.data;
-        setUserId(id);
-      } else {
-        console.error("Failed to fetch user info");
+      try {
+        const res = await axios.get("/api/auth/me");
+        console.log("User Info:", res.data);
+        if (res.status === 200) {
+          const { id } = res.data;
+          setUserId(id);
+        } else {
+          console.error("Failed to fetch user info");
+        }
+      } catch (err) {
+        console.error("Error fetching user:", err.message);
       }
     }
 
@@ -64,14 +67,29 @@ export default function UserDashboard() {
         </p>
       )}
 
-<div className="p-4">
-<UserRideSearchForm />
-</div>
-      
-      {/* Page Heading */}
-      <h1 className="text-2xl font-bold text-blue-800 mb-6 text-center">
+      {/* --- 3. AI SEARCH SECTION (NEW) --- */}
+      <div className="p-4 mb-8 border rounded-lg shadow-sm">
+        <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+          Find Your Ride with AI 🤖
+        </h1>
+        {/* This component handles its own search AND result display */}
+        <AIChatSearch />
+      </div>
+      {/* ---------------------------------- */}
+
+      {/* --- 4. TRADITIONAL SEARCH (OLD) --- */}
+      <div className="p-4 mb-8 border rounded-lg">
+        <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">
+          Or Use Standard Filters
+        </h2>
+        <UserRideSearchForm />
+      </div>
+      {/* ----------------------------------- */}
+
+      {/* --- 5. ALL RIDES LIST --- */}
+      <h2 className="text-2xl font-bold text-blue-800 mb-6 text-center border-t pt-8 mt-8">
         All Available Rides
-      </h1>
+      </h2>
 
       {/* Error Message */}
       {error && (
@@ -81,7 +99,7 @@ export default function UserDashboard() {
       )}
 
       {/* Ride List */}
-      {rides.length === 0 ? (
+      {rides.length === 0 && !error ? (
         <p className="text-center text-gray-500 italic">
           No rides available right now.
         </p>
